@@ -46,3 +46,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# python training pipeline
+/.venv-train/
+__pycache__/
+/scripts/train/*.task
