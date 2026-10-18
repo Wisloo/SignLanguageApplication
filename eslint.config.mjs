@@ -13,6 +13,12 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "src/generated/**",
+    // Local tooling / artifacts that ship their own JS (never lint these):
+    ".venv-train/**",
+    "test-results/**",
+    "playwright-report/**",
+    "coverage/**",
+    "scripts/train/**",
   ]),
 ]);
 

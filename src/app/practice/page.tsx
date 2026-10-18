@@ -5,7 +5,7 @@ import {
   type PracticeMode,
 } from "@/components/practice/practice-client";
 import { Card } from "@/components/ui/card";
-import { isSignLanguage } from "@/data/alphabet";
+import { isVisibleLanguage } from "@/data/alphabet";
 
 export const metadata: Metadata = {
   title: "Practice with your camera",
@@ -35,7 +35,7 @@ async function PracticeResolver({
   const letterParam = typeof params.letter === "string" ? params.letter : undefined;
   const modeParam = typeof params.mode === "string" ? params.mode : undefined;
 
-  const lang = langParam && isSignLanguage(langParam) ? langParam : "asl";
+  const lang = langParam && isVisibleLanguage(langParam) ? langParam : "asl";
   const letter = letterParam ? letterParam.toUpperCase().charAt(0) : "A";
   const mode: PracticeMode = modeParam === "sentences" ? "sentences" : "letters";
 

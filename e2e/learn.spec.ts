@@ -1,21 +1,13 @@
 import { expect, test } from "@playwright/test";
 
-test("alphabet page shows letters for both languages", async ({ page }) => {
+test("alphabet page shows letters", async ({ page }) => {
   await page.goto("/learn");
 
   await expect(
     page.getByRole("heading", { name: "The fingerspelling alphabet" }),
   ).toBeVisible();
-  await expect(page.getByRole("tab", { name: "ASL" })).toHaveAttribute(
-    "aria-selected",
-    "true",
-  );
-
-  await page.getByRole("tab", { name: "FSL" }).click();
-  await expect(page.getByRole("tab", { name: "FSL" })).toHaveAttribute(
-    "aria-selected",
-    "true",
-  );
+  await expect(page.getByRole("link", { name: "Letter A" })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "FSL" })).toHaveCount(0);
 });
 
 test("letter detail page describes the sign", async ({ page }) => {

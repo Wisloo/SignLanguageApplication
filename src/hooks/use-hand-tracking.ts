@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { classify, type Prediction } from "@/lib/vision/classifier";
 import { extractFeatures, type HandFeatures, type Landmark } from "@/lib/vision/features";
 import { getHandLandmarker } from "@/lib/vision/hand-landmarker";
+import { classifyLandmarks, DEFAULT_MODEL_URL, loadLetterModel, type LetterModel } from "@/lib/vision/letter-model";
 import type { Camera } from "./use-camera";
 
 export interface TrackingFrame {
@@ -19,18 +20,21 @@ export interface TrackingFrame {
 
 export interface HandTracking {
   frame: TrackingFrame | null;
+  /** True once the learned letter model has loaded (covers all 26 letters). */
+  modelReady: boolean;
 }
 
 const STATE_UPDATE_MS = 90;
 
 export function useHandTracking(
   camera: Camera,
-  options?: { onFrame?: (frame: TrackingFrame | null) => void },
+  options?: { modelUrl?: string; onFrame?: (frame: TrackingFrame | null) => void },
 ): HandTracking {
   const { videoRef, canvasRef, status } = camera;
-  const { onFrame } = options ?? {};
+  const { modelUrl = DEFAULT_MODEL_URL, onFrame } = options ?? {};
   const onFrameRef = useRef(onFrame);
   const [frame, setFrame] = useState<TrackingFrame | null>(null);
+  const [loadedUrl, setLoadedUrl] = useState<string | null>(null);
 
   useEffect(() => {
     onFrameRef.current = onFrame;
@@ -46,6 +50,13 @@ export function useHandTracking(
     let drawing: DrawingUtils | null = null;
 
     const landmarkerRef: { current: HandLandmarker | null } = { current: null };
+    const modelRef: { current: LetterModel | null } = { current: null };
+
+    void loadLetterModel(modelUrl).then((model) => {
+      if (cancelled) return;
+      modelRef.current = model;
+      if (model) setLoadedUrl(modelUrl);
+    });
 
     function draw(result: HandLandmarkerResult) {
       const canvas = canvasRef.current;
@@ -101,7 +112,12 @@ export function useHandTracking(
             const handedness =
               (result.handedness?.[0]?.[0]?.categoryName as "Left" | "Right") ?? null;
             const features = extractFeatures(landmarks, handedness);
-            const nextFrame = { landmarks, features, prediction: classify(features) };
+            const fromModel = modelRef.current
+              ? classifyLandmarks(modelRef.current, landmarks)
+              : null;
+            const prediction =
+              fromModel && fromModel.letter ? fromModel : classify(features);
+            const nextFrame = { landmarks, features, prediction };
             setFrame(nextFrame);
             onFrameRef.current?.(nextFrame);
           } else {
@@ -128,7 +144,9 @@ export function useHandTracking(
       cancelled = true;
       cancelAnimationFrame(raf);
     };
-  }, [status, videoRef, canvasRef]);
+  }, [status, videoRef, canvasRef, modelUrl]);
 
-  return { frame };
+  const modelReady = loadedUrl === modelUrl;
+
+  return { frame, modelReady };
 }

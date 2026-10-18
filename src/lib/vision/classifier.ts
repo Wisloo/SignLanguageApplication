@@ -12,6 +12,8 @@ export interface Prediction {
   confidence: number;
   /** All letters ranked by score. */
   candidates: Candidate[];
+  /** Which recogniser produced this prediction. */
+  source: "model" | "heuristic";
 }
 
 /** Below this score we do not auto-grade — the learner keeps adjusting instead. */
@@ -102,7 +104,7 @@ export function classify(f: HandFeatures): Prediction {
 
   const best = candidates[0];
   if (!best) {
-    return { letter: null, confidence: 0, candidates };
+    return { letter: null, confidence: 0, candidates, source: "heuristic" };
   }
 
   const tied = candidates.find(
@@ -113,5 +115,6 @@ export function classify(f: HandFeatures): Prediction {
     letter: best.score >= GRADED_MIN_CONFIDENCE && !tied ? best.letter : null,
     confidence: best.score,
     candidates,
+    source: "heuristic",
   };
 }

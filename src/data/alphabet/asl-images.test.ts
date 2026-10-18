@@ -27,9 +27,12 @@ describe("ASL sign reference images", () => {
     expect(letters).toEqual(expected);
   });
 
-  it("leaves Filipino Sign Language without images for now", () => {
+  it("points every FSL letter at an existing /signs/fsl/<letter>.png", () => {
     for (const letter of alphabets.fsl.letters) {
-      expect(letter.imageSrc).toBeUndefined();
+      expect(letter.imageSrc).toBe(`/signs/fsl/${letter.letter.toLowerCase()}.png`);
+      const file = join(PUBLIC_DIR, letter.imageSrc as string);
+      expect(existsSync(file), `missing file for ${letter.letter}: ${file}`).toBe(true);
+      expect(statSync(file).size, `empty file for ${letter.letter}`).toBeGreaterThan(0);
     }
   });
 });

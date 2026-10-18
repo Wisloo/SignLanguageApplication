@@ -14,7 +14,7 @@ import {
   SparkleIcon,
 } from "@/components/ui/icons";
 import { CameraStage } from "@/components/vision/camera-stage";
-import { alphabets, getLetter, type SignLanguage } from "@/data/alphabet";
+import { alphabets, getLetter, languages, type SignLanguage } from "@/data/alphabet";
 import { useSignTarget } from "@/hooks/use-sign-target";
 import { cn } from "@/lib/cn";
 import { recordProgress } from "@/lib/progress-client";
@@ -102,7 +102,7 @@ function LanguageToggle({
       aria-label="Sign language"
       className="mx-auto inline-flex gap-1 rounded-full border-2 border-foreground bg-card p-1 shadow-pop-sm"
     >
-      {(["asl", "fsl"] as SignLanguage[]).map((id) => (
+      {languages.map(({ id }) => (
         <button
           key={id}
           type="button"
@@ -186,12 +186,15 @@ function QuizRound({
     onSolved();
   }, [onSolved]);
 
-  const { videoRef, canvasRef, streamRef, status, error, frame, holdProgress } =
-    useSignTarget(letter, handleSolved);
+  const { videoRef, canvasRef, streamRef, status, error, frame, holdProgress, modelReady } =
+    useSignTarget(letter, lang, handleSolved);
 
-  const reliable = RELIABLE_LETTERS.has(letter);
+  // The learned model grades every letter; the ASL-only heuristics are used only
+  // as a fallback and must not grade FSL, whose signs differ.
+  const reliable = (lang === "asl" && RELIABLE_LETTERS.has(letter)) || modelReady;
   const last = index + 1 >= total;
-  const detected = frame?.prediction.letter ?? null;
+  const rawDetected = frame?.prediction.letter ?? null;
+  const detected = rawDetected === "none" ? null : rawDetected;
   const confidence = frame?.prediction.confidence ?? 0;
 
   return (

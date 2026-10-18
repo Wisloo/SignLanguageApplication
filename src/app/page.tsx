@@ -24,7 +24,7 @@ const features: {
     icon: <BookIcon />,
     tone: "accent",
     title: "Learn the alphabet",
-    body: "Explore every fingerspelling letter in ASL and FSL, with clear pictures and friendly tips.",
+    body: "Explore every fingerspelling letter in ASL, with clear pictures and friendly tips.",
   },
   {
     href: "/practice",
@@ -69,7 +69,7 @@ export default function Home() {
 
           <span className="inline-flex items-center gap-2 rounded-full border-2 border-foreground bg-card px-4 py-2 text-sm font-bold text-foreground shadow-pop-sm">
             <HandIcon className="h-4 w-4" />
-            ASL &amp; FSL
+            ASL
           </span>
           <h1 className="font-display text-5xl font-extrabold leading-[1.05] tracking-tight text-foreground md:text-7xl">
             Learn to sign,

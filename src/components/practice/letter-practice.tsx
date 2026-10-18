@@ -1,12 +1,13 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { SignImage } from "@/components/learn/sign-image";
 import { SpeakButton } from "@/components/learn/speak-button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CameraIcon, CheckIcon, HandIcon, SparkleIcon } from "@/components/ui/icons";
 import { CameraStage } from "@/components/vision/camera-stage";
-import { alphabets, getLetter, type SignLanguage } from "@/data/alphabet";
+import { alphabets, getLetter, languages, type SignLanguage } from "@/data/alphabet";
 import type { Camera } from "@/hooks/use-camera";
 import { useClipRecorder } from "@/hooks/use-clip-recorder";
 import { useLetterTarget } from "@/hooks/use-sign-target";
@@ -34,7 +35,6 @@ export function LetterPractice({
 
   const alphabet = alphabets[lang];
   const content = getLetter(lang, letter);
-  const reliable = RELIABLE_LETTERS.has(letter);
   const movable = letter === "J" || letter === "Z";
 
   const celebrate = useCallback(() => {
@@ -43,11 +43,16 @@ export function LetterPractice({
     void recordProgress({ language: lang, letter, success: true });
   }, [lang, letter]);
 
-  const { status, error, frame, holdProgress, reset } = useLetterTarget(
+  const { status, error, frame, holdProgress, reset, modelReady } = useLetterTarget(
     camera,
     letter,
+    lang,
     celebrate,
   );
+
+  // The learned model grades every letter; the ASL-only heuristics are used only
+  // as a fallback and must not grade FSL, whose signs differ.
+  const reliable = (lang === "asl" && RELIABLE_LETTERS.has(letter)) || modelReady;
 
   const submitLetter = useCallback(
     async (clip: Blob) => {
@@ -107,7 +112,8 @@ export function LetterPractice({
     setCheckNote(null);
   }
 
-  const detected = frame?.prediction.letter ?? null;
+  const rawDetected = frame?.prediction.letter ?? null;
+  const detected = rawDetected === "none" ? null : rawDetected;
   const confidence = frame?.prediction.confidence ?? 0;
 
   return (
@@ -214,7 +220,7 @@ export function LetterPractice({
               aria-label="Sign language"
               className="inline-flex gap-1 rounded-full border-2 border-foreground bg-card p-1 shadow-pop-sm"
             >
-              {(["asl", "fsl"] as SignLanguage[]).map((id) => (
+              {languages.map(({ id }) => (
                 <button
                   key={id}
                   type="button"
@@ -249,6 +255,14 @@ export function LetterPractice({
             <p className="font-display text-7xl font-extrabold leading-none tracking-tight text-foreground">
               {letter}
             </p>
+            {content?.imageSrc ? (
+              <SignImage
+                src={content.imageSrc}
+                alt={`The ${alphabet.name} fingerspelling handshape for the letter ${letter}.`}
+                motion={content.motion}
+                className="max-w-[14rem]"
+              />
+            ) : null}
             {content ? (
               <div className="flex flex-col gap-3">
                 <p className="leading-relaxed text-foreground">{content.handshape}</p>

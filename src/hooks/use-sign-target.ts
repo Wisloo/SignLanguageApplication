@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { SignLanguage } from "@/data/alphabet";
 import { GRADED_MIN_CONFIDENCE, RELIABLE_LETTERS } from "@/lib/vision/classifier";
+import { modelUrlForLang } from "@/lib/vision/letter-model";
 import { MotionTracker, type MotionLetter } from "@/lib/vision/motion";
 import { useCamera, type Camera } from "./use-camera";
 import { useHandTracking, type TrackingFrame } from "./use-hand-tracking";
@@ -11,6 +13,7 @@ const HOLD_FRAMES = 7;
 export function useLetterTarget(
   camera: Camera,
   letter: string,
+  lang: SignLanguage,
   onSolved: () => void,
 ) {
   const [holdProgress, setHoldProgress] = useState(0);
@@ -40,15 +43,22 @@ export function useLetterTarget(
         return;
       }
 
-      if (!RELIABLE_LETTERS.has(letter) || !next) {
+      if (!next) {
         holdRef.current = 0;
         setHoldProgress(0);
         return;
       }
 
+      const { prediction } = next;
+      // The learned model covers every letter; the ASL-only heuristic grades just
+      // the subset it separates reliably, so only trust it for ASL.
+      const gradeable =
+        prediction.source === "model" ||
+        (lang === "asl" && RELIABLE_LETTERS.has(letter));
       const ok =
-        next.prediction.letter === letter &&
-        next.prediction.confidence >= GRADED_MIN_CONFIDENCE;
+        gradeable &&
+        prediction.letter === letter &&
+        prediction.confidence >= GRADED_MIN_CONFIDENCE;
 
       if (!ok) {
         holdRef.current = 0;
@@ -67,10 +77,13 @@ export function useLetterTarget(
         onSolvedRef.current();
       }
     },
-    [letter],
+    [letter, lang],
   );
 
-  const tracking = useHandTracking(camera, { onFrame });
+  const tracking = useHandTracking(camera, {
+    modelUrl: modelUrlForLang(lang),
+    onFrame,
+  });
 
   const reset = useCallback(() => {
     holdRef.current = 0;
@@ -82,7 +95,11 @@ export function useLetterTarget(
   return { ...camera, ...tracking, holdProgress, reset };
 }
 
-export function useSignTarget(letter: string, onSolved: () => void) {
+export function useSignTarget(
+  letter: string,
+  lang: SignLanguage,
+  onSolved: () => void,
+) {
   const camera = useCamera();
-  return useLetterTarget(camera, letter, onSolved);
+  return useLetterTarget(camera, letter, lang, onSolved);
 }

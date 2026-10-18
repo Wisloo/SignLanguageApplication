@@ -81,14 +81,12 @@ async function ProgressContent() {
   }
 
   const rows = await prisma.progress.findMany({
-    where: { userId: session.user.id },
+    where: { userId: session.user.id, language: "asl" },
     orderBy: { lastPractisedAt: "desc" },
   });
 
   const totalStars = rows.reduce((sum, row) => sum + row.stars, 0);
   const practised = rows.length;
-  const aslRows = rows.filter((row) => row.language === "asl");
-  const fslRows = rows.filter((row) => row.language === "fsl");
 
   return (
     <div className="flex flex-col gap-8">
@@ -123,8 +121,7 @@ async function ProgressContent() {
         </Card>
       ) : (
         <>
-          <LanguageProgress language="asl" rows={aslRows} />
-          <LanguageProgress language="fsl" rows={fslRows} />
+          <LanguageProgress language="asl" rows={rows} />
         </>
       )}
     </div>

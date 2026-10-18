@@ -13,35 +13,37 @@ export function LanguageTabs({ alphabets }: { alphabets: Alphabet[] }) {
 
   return (
     <div className="flex flex-col gap-10">
-      <div
-        role="tablist"
-        aria-label="Sign language"
-        className="mx-auto inline-flex gap-2 self-center rounded-full border-2 border-foreground bg-card p-1.5 shadow-pop-sm"
-      >
-        {alphabets.map((alphabet) => {
-          const selected = alphabet.id === current.id;
-          return (
-            <button
-              key={alphabet.id}
-              type="button"
-              role="tab"
-              id={`tab-${alphabet.id}`}
-              aria-selected={selected}
-              aria-controls={`panel-${alphabet.id}`}
-              onClick={() => setActive(alphabet.id)}
-              className={cn(
-                "h-11 rounded-full border-2 px-5 text-sm font-bold transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
-                selected
-                  ? "border-foreground bg-accent text-white shadow-pop-sm"
-                  : "border-transparent text-muted hover:bg-tertiary hover:text-foreground",
-              )}
-            >
-              {alphabet.shortName}
-            </button>
-          );
-        })}
-      </div>
+      {alphabets.length > 1 ? (
+        <div
+          role="tablist"
+          aria-label="Sign language"
+          className="mx-auto inline-flex gap-2 self-center rounded-full border-2 border-foreground bg-card p-1.5 shadow-pop-sm"
+        >
+          {alphabets.map((alphabet) => {
+            const selected = alphabet.id === current.id;
+            return (
+              <button
+                key={alphabet.id}
+                type="button"
+                role="tab"
+                id={`tab-${alphabet.id}`}
+                aria-selected={selected}
+                aria-controls={`panel-${alphabet.id}`}
+                onClick={() => setActive(alphabet.id)}
+                className={cn(
+                  "h-11 rounded-full border-2 px-5 text-sm font-bold transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+                  selected
+                    ? "border-foreground bg-accent text-white shadow-pop-sm"
+                    : "border-transparent text-muted hover:bg-tertiary hover:text-foreground",
+                )}
+              >
+                {alphabet.shortName}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
 
       <div
         role="tabpanel"
@@ -59,7 +61,7 @@ export function LanguageTabs({ alphabets }: { alphabets: Alphabet[] }) {
           </p>
         ) : null}
 
-        <ul className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6 md:gap-6">
+        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 lg:gap-6">
           {current.letters.map((letter) => (
             <li key={letter.letter}>
               <LetterTile lang={current.id} letter={letter} />

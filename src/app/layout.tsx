@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     template: "%s · SignBright",
   },
   description:
-    "A calm, accessible way for special education learners to learn the ASL and FSL fingerspelling alphabet, practice with their camera, and track progress.",
+    "A calm, accessible way for special education learners to learn the ASL fingerspelling alphabet, practice with their camera, and track progress.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

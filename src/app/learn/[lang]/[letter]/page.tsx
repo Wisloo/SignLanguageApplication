@@ -13,10 +13,10 @@ import {
   HandIcon,
   SparkleIcon,
 } from "@/components/ui/icons";
-import { alphabets, getAlphabet, getLetter, isSignLanguage } from "@/data/alphabet";
+import { getAlphabet, getLetter, isVisibleLanguage, languages } from "@/data/alphabet";
 
 export function generateStaticParams() {
-  return Object.values(alphabets).flatMap((alphabet) =>
+  return languages.flatMap((alphabet) =>
     alphabet.letters.map((letter) => ({
       lang: alphabet.id,
       letter: letter.letter.toLowerCase(),
@@ -28,7 +28,7 @@ export async function generateMetadata({
   params,
 }: PageProps<"/learn/[lang]/[letter]">): Promise<Metadata> {
   const { lang, letter } = await params;
-  if (!isSignLanguage(lang)) return {};
+  if (!isVisibleLanguage(lang)) return {};
   const alphabet = getAlphabet(lang);
   const content = getLetter(lang, letter);
   if (!alphabet || !content) return {};
@@ -42,7 +42,7 @@ export default async function LetterPage({
   params,
 }: PageProps<"/learn/[lang]/[letter]">) {
   const { lang, letter } = await params;
-  if (!isSignLanguage(lang)) notFound();
+  if (!isVisibleLanguage(lang)) notFound();
 
   const alphabet = getAlphabet(lang);
   const content = getLetter(lang, letter);

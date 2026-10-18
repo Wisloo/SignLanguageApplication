@@ -5,7 +5,7 @@ import { languages } from "@/data/alphabet";
 export const metadata: Metadata = {
   title: "Learn the alphabet",
   description:
-    "Browse the ASL and FSL fingerspelling alphabet, letter by letter, with friendly tips.",
+    "Browse the ASL fingerspelling alphabet, letter by letter, with friendly tips.",
 };
 
 export default function LearnPage() {
