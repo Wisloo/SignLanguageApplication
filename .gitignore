@@ -57,3 +57,4 @@ __pycache__/
 /playwright-report/
 /state/
 *.log
+RESEARCH_AND_TESTING.md
