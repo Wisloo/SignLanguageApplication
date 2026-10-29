@@ -2,7 +2,6 @@
 
 import { useCallback, useState } from "react";
 import { SignImage } from "@/components/learn/sign-image";
-import { SpeakButton } from "@/components/learn/speak-button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CameraIcon, CheckIcon, HandIcon, SparkleIcon } from "@/components/ui/icons";
@@ -266,20 +265,13 @@ export function LetterPractice({
             {content ? (
               <div className="flex flex-col gap-3">
                 <p className="leading-relaxed text-foreground">{content.handshape}</p>
-                {content.movement ? (
-                  <p className="leading-relaxed text-foreground">{content.movement}</p>
-                ) : null}
+{content.movement ? (
+                   <p className="leading-relaxed text-foreground">{content.movement}</p>
+                 ) : null}
                 <p className="text-sm text-muted">{content.tip}</p>
               </div>
             ) : null}
-            {content ? (
-              <SpeakButton
-                text={`The letter ${letter}. ${content.handshape}${
-                  content.movement ? ` ${content.movement}` : ""
-                }`}
-              />
-            ) : null}
-          </div>
+            </div>
         </Card>
 
         <Card className="flex flex-col gap-4">

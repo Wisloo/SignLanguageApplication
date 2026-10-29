@@ -2,7 +2,6 @@
 
 import { useCallback, useRef, useState } from "react";
 import { SignImage } from "@/components/learn/sign-image";
-import { SpeakButton } from "@/components/learn/speak-button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -156,8 +155,7 @@ function TargetCard({
       {content?.movement ? (
         <p className="leading-relaxed text-foreground">{content.movement}</p>
       ) : null}
-      <SpeakButton text={`Make the letter ${letter}.`} label="Hear it" />
-    </Card>
+      </Card>
   );
 }
 
@@ -319,7 +317,6 @@ function ManualRound({
             {getLetter(lang, letter)?.movement}
           </p>
         ) : null}
-        <SpeakButton text={`Make the letter ${letter}.`} label="Hear it" />
 
         <div aria-live="polite" className="flex w-full flex-col items-center gap-4">
           {solved ? (

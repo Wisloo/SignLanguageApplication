@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { SpeakButton } from "@/components/learn/speak-button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CameraIcon, HandIcon, SparkleIcon } from "@/components/ui/icons";
@@ -128,7 +127,6 @@ export function SentencePractice({ camera }: { camera: Camera }) {
                 If that is not quite right, no problem at all — every try helps you learn.
               </p>
               <div className="flex flex-wrap gap-3">
-                <SpeakButton text={text} label="Hear it" />
                 <Button variant="secondary" onClick={retry}>
                   <CameraIcon className="h-5 w-5" />
                   Try another sign

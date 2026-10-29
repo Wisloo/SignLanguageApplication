@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SpeakButton } from "@/components/learn/speak-button";
 import { SignImage } from "@/components/learn/sign-image";
 import { buttonClasses } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -51,10 +50,6 @@ export default async function LetterPage({
   const index = alphabet.letters.findIndex((item) => item.letter === content.letter);
   const prev = index > 0 ? alphabet.letters[index - 1] : undefined;
   const next = index < alphabet.letters.length - 1 ? alphabet.letters[index + 1] : undefined;
-
-  const speakText = `The letter ${content.letter}. ${content.handshape}${
-    content.movement ? ` ${content.movement}` : ""
-  }`;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-12 md:py-16">
@@ -137,7 +132,6 @@ export default async function LetterPage({
           </Card>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-            <SpeakButton text={speakText} label="Hear it" className="flex-1 sm:flex-none" />
             <Link
               href={`/practice?lang=${alphabet.id}&letter=${content.letter}`}
               className={buttonClasses({ className: "flex-1 sm:flex-none" })}
